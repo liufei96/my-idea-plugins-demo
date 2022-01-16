@@ -1,0 +1,31 @@
+<idea-plugin>
+    <!--插件id-->
+    <id>com.liufei.test.my_idea_plugins</id>
+    <!--插件名称-->
+    <name>Demo</name>
+    .<!--插件名称-->
+    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+    <!--插件说明-->
+    <description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+    ]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <!--依赖的其他插件能力-->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <!--插件动作-->
+    <actions>
+        <!-- Add your actions here -->
+        <action id="HelloWorldAction" class="com.liufei.test.HelloWorldAction" text="提示框" description="这是一个提示框">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
