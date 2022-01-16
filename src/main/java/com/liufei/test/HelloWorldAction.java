@@ -3,8 +3,6 @@ package com.liufei.test;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 
 public class HelloWorldAction extends AnAction {
 
@@ -21,6 +19,6 @@ public class HelloWorldAction extends AnAction {
         MyDialog dialog = new MyDialog(project);
         dialog.setVisible(true);
         dialog.pack();
-        System.exit(0);
+//        System.exit(0);
     }
 }

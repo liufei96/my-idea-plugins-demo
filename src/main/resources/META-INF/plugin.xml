@@ -5,7 +5,7 @@
     <name>Demo</name>
     .<!--插件名称-->
     <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
-
+    <idea-version since-build="193.0"></idea-version>
     <!--插件说明-->
     <description><![CDATA[
     Enter short description for your plugin here.<br>
@@ -19,6 +19,9 @@
     <!--依赖的其他插件能力-->
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+<!--        <applicationService serviceImplementation="com.liufei.test.service.PersistentDemo"></applicationService>-->
+        <projectService serviceImplementation="com.liufei.test.service.PersistentDemo"></projectService>
+        <projectService serviceImplementation="com.liufei.test.service.MyService"></projectService>
     </extensions>
 
     <!--插件动作-->
