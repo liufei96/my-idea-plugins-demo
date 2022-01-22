@@ -5,6 +5,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.liufei.test.service.PersistentDemo;
+import com.liufei.test.util.GitUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,51 +88,14 @@ public class MyDialog extends JDialog {
         persistDemo.getState().remark = textArea1.getText();
 
         try {
-            String gitUrl = getGitUrl(readGitConfig());
+            String gitUrl = GitUtil.getGitUrl2(project);
+            new MyNotification("git address：" + gitUrl, project);
             persistDemo.getState().gitUrl = gitUrl;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-    public String readGitConfig() throws IOException {
-        PropertiesComponent instance = PropertiesComponent.getInstance(project);
-        String projectPath = instance.getValue("last_opened_file_path");
-        String gitUrl = "";
-        File file = new File(projectPath + "\\.git\\config");
-        if (!file.exists()) {
-            return "";
-        }
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(projectPath + "\\.git\\config"), "UTF-8"));) {
-            // 读取输出
-            String line = null;
-            while ((line = bufferedReader.readLine()) != null) {
-                String content = line.trim();
-                if (content.startsWith("url")) {
-                    gitUrl = content;
-                    break;
-                }
-            }
-        }
-        return gitUrl;
-    }
-
-    /**
-     *  url = git@github.com:liufei96/my_java_algorithm.git  => git@github.com:liufei96/my_java_algorithm.git
-     * 处理一下
-     * @return
-     */
-    private String getGitUrl(String gitUrl) {
-        if (gitUrl == null || gitUrl.length() == 0) {
-            return gitUrl;
-        }
-        String[] split = gitUrl.split("=");
-        if (split.length > 1) {
-            return split[1].trim();
-        }
-        return "";
-    }
 
 
     private void onCancel() {
