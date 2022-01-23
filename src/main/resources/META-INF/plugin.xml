@@ -5,7 +5,6 @@
     <name>Demo</name>
     .<!--插件名称-->
     <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
-    <idea-version since-build="193.0"></idea-version>
     <!--插件说明-->
     <description><![CDATA[
     Enter short description for your plugin here.<br>
@@ -22,6 +21,7 @@
 <!--        <applicationService serviceImplementation="com.liufei.test.service.PersistentDemo"></applicationService>-->
         <projectService serviceImplementation="com.liufei.test.service.PersistentDemo"></projectService>
         <projectService serviceImplementation="com.liufei.test.service.MyService"></projectService>
+        <toolWindow factoryClass="com.liufei.test.util.MyToolWindowFactory" anchor="right" id="myToolWindowFactory"/>
     </extensions>
 
     <!--插件动作-->

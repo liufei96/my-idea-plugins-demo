@@ -89,7 +89,7 @@ public class MyDialog extends JDialog {
 
         try {
             String gitUrl = GitUtil.getGitUrl2(project);
-            new MyNotification("git address：" + gitUrl, project);
+            new MyNotification("git address: " + gitUrl, project);
             persistDemo.getState().gitUrl = gitUrl;
         } catch (IOException e) {
             e.printStackTrace();
