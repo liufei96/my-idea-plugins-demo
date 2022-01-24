@@ -4,6 +4,7 @@ import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.execution.impl.RunConfigurationLevel;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -66,30 +67,35 @@ public class MyToolWindowFactory implements ToolWindowFactory {
         RunManager instance = RunManager.getInstance(project);
         // instance.createConfiguration("神农回滚测试", (ConfigurationFactory) instance.getTempConfigurationsList().get(3));
         List<RunnerAndConfigurationSettings> allSettings = instance.getAllSettings();
-        for (RunnerAndConfigurationSettings allSetting : allSettings) {
-            if (allSetting.getName().contains("Main")) {
+        for (RunnerAndConfigurationSettings settings : allSettings) {
+            RunConfigurationLevel level = (RunConfigurationLevel) ReflectUtil.getValue(settings, "level");
+            if (RunConfigurationLevel.WORKSPACE.name().equals(level.name())) {
                 // 执行
                 // ProgramRunnerUtil.executeConfiguration(allSetting, DefaultRunExecutor.getRunExecutorInstance());
                 // debug的方式执行
-                ProgramRunnerUtil.executeConfiguration(allSetting, DefaultDebugExecutor.getDebugExecutorInstance());
+                // ProgramRunnerUtil.executeConfiguration(settings, DefaultDebugExecutor.getDebugExecutorInstance());
                 //System.out.println(debugExecutorInstance.getStartActionText());
+                RunnerAndConfigurationSettingsImpl applicationConfiguration = (RunnerAndConfigurationSettingsImpl) settings;
+                RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = applicationConfiguration.clone();
+                runnerAndConfigurationSettings.setName("神农回归测试");
+                RunConfiguration configuration = runnerAndConfigurationSettings.getConfiguration();
+                instance.addConfiguration(runnerAndConfigurationSettings);
             }
         }
-        RunnerAndConfigurationSettingsImpl applicationConfiguration = (RunnerAndConfigurationSettingsImpl) allSettings.get(0);
 
-        RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = applicationConfiguration.clone();
+//        RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = applicationConfiguration.clone();
+//
+//        runnerAndConfigurationSettings.setName("神农回归测试");
+//        ModuleBasedConfiguration configuration = (ModuleBasedConfiguration) runnerAndConfigurationSettings.getConfiguration();
+//        Object state = configuration.getState();
+//        instance.addConfiguration(runnerAndConfigurationSettings);
+//        System.out.println(instance);
 
-        runnerAndConfigurationSettings.setName("神农回归测试");
-        ModuleBasedConfiguration configuration = (ModuleBasedConfiguration) runnerAndConfigurationSettings.getConfiguration();
-        Object state = configuration.getState();
-        instance.addConfiguration(runnerAndConfigurationSettings);
-        System.out.println(instance);
-
-        Executor debugExecutorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
-        ProgramRunnerUtil.executeConfiguration(runnerAndConfigurationSettings, DefaultDebugExecutor.getDebugExecutorInstance());
-        System.out.println(debugExecutorInstance.getStartActionText());
-        System.out.println(debugExecutorInstance.getDescription());
-        System.out.println(debugExecutorInstance.isApplicable(project));
+//        Executor debugExecutorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
+//        ProgramRunnerUtil.executeConfiguration(runnerAndConfigurationSettings, DefaultDebugExecutor.getDebugExecutorInstance());
+//        System.out.println(debugExecutorInstance.getStartActionText());
+//        System.out.println(debugExecutorInstance.getDescription());
+//        System.out.println(debugExecutorInstance.isApplicable(project));
 
         // 重启idea
 //        Application application = ApplicationManager.getApplication();
