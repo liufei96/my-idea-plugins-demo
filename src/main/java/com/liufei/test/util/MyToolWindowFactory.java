@@ -7,10 +7,7 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.impl.RunConfigurationLevel;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
-import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.runners.RunContentBuilder;
+import com.intellij.execution.runners.*;
 import com.intellij.javascript.debugger.execution.DebuggableProgramRunner;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -25,13 +22,25 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class MyToolWindowFactory implements ToolWindowFactory {
+
+    private JButton run = new JButton("运行");
+    private JButton stop = new JButton("停止");
+    private JButton restart = new JButton("重启");
+
+    RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings;
+
+    Executor debugExecutorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
+
     @SneakyThrows
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
@@ -41,7 +50,7 @@ public class MyToolWindowFactory implements ToolWindowFactory {
         Content labelContent =
                 contentManager.getFactory() // 内容管理器获取工厂类
                         .createContent( // 创建Content（组件类实例、显示名称、是否可以锁定）
-                                new JLabel("Hello World"),
+                                jPanel(),
                                 "MyTab",
                                 false
                         );
@@ -76,7 +85,7 @@ public class MyToolWindowFactory implements ToolWindowFactory {
                 // ProgramRunnerUtil.executeConfiguration(settings, DefaultDebugExecutor.getDebugExecutorInstance());
                 //System.out.println(debugExecutorInstance.getStartActionText());
                 RunnerAndConfigurationSettingsImpl applicationConfiguration = (RunnerAndConfigurationSettingsImpl) settings;
-                RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = applicationConfiguration.clone();
+                runnerAndConfigurationSettings = applicationConfiguration.clone();
                 runnerAndConfigurationSettings.setName("神农回归测试");
                 RunConfiguration configuration = runnerAndConfigurationSettings.getConfiguration();
                 instance.addConfiguration(runnerAndConfigurationSettings);
@@ -100,5 +109,94 @@ public class MyToolWindowFactory implements ToolWindowFactory {
         // 重启idea
 //        Application application = ApplicationManager.getApplication();
 //        application.restart();
+
+        run.addActionListener(e -> {
+            instance.setSelectedConfiguration(runnerAndConfigurationSettings);
+            ProgramRunnerUtil.executeConfiguration(runnerAndConfigurationSettings, debugExecutorInstance);
+        });
+
+        runnerAndConfigurationSettings.getManager().addRunManagerListener(new RunManagerListener() {
+            @Override
+            public void runConfigurationSelected(@Nullable RunnerAndConfigurationSettings settings) {
+                RunManagerListener.super.runConfigurationSelected(settings);
+                System.out.println("runConfigurationSelected");
+            }
+
+            @Override
+            public void runConfigurationSelected() {
+                RunManagerListener.super.runConfigurationSelected();
+                System.out.println("runConfigurationSelected");
+            }
+
+            @Override
+            public void beforeRunTasksChanged() {
+                RunManagerListener.super.beforeRunTasksChanged();
+                System.out.println("beforeRunTasksChanged");
+            }
+
+            @Override
+            public void runConfigurationAdded(@NotNull RunnerAndConfigurationSettings settings) {
+                RunManagerListener.super.runConfigurationAdded(settings);
+                System.out.println("runConfigurationAdded");
+            }
+
+            @Override
+            public void runConfigurationRemoved(@NotNull RunnerAndConfigurationSettings settings) {
+                RunManagerListener.super.runConfigurationRemoved(settings);
+                System.out.println("runConfigurationRemoved");
+            }
+
+            @Override
+            public void runConfigurationChanged(@NotNull RunnerAndConfigurationSettings settings, @Nullable String existingId) {
+                RunManagerListener.super.runConfigurationChanged(settings, existingId);
+                System.out.println("runConfigurationChanged");
+            }
+
+            @Override
+            public void runConfigurationChanged(@NotNull RunnerAndConfigurationSettings settings) {
+                RunManagerListener.super.runConfigurationChanged(settings);
+                System.out.println("runConfigurationChanged");
+            }
+
+            @Override
+            public void beginUpdate() {
+                RunManagerListener.super.beginUpdate();
+                System.out.println("beginUpdate");
+            }
+
+            @Override
+            public void endUpdate() {
+                RunManagerListener.super.endUpdate();
+                System.out.println("endUpdate");
+            }
+
+            @Override
+            public void stateLoaded(@NotNull RunManager runManager, boolean isFirstLoadState) {
+                RunManagerListener.super.stateLoaded(runManager, isFirstLoadState);
+                System.out.println("stateLoaded");
+            }
+        });
+
+        restart.addActionListener(e -> {
+            System.out.println("restart begin");
+            ExecutionEnvironmentBuilder environment = ExecutionUtil.createEnvironment(debugExecutorInstance, runnerAndConfigurationSettings);
+            ExecutionUtil.restart(environment.build());
+            System.out.println("restart completed");
+        });
+
+        stop.addActionListener(e -> {
+            System.out.println("stop begin");
+            ExecutionEnvironmentBuilder environment = ExecutionUtil.createEnvironment(debugExecutorInstance, runnerAndConfigurationSettings);
+            ExecutionUtil.handleExecutionError(environment.build(), new ExecutionException("中止"));
+            System.out.println("stop completed");
+        });
+    }
+
+    public JPanel jPanel() {
+        JPanel jPanel = new JPanel(new FlowLayout());
+        jPanel.add(run);
+        jPanel.add(restart);
+        jPanel.add(stop);
+        return jPanel;
     }
 }
