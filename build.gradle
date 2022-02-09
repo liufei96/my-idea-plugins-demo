@@ -6,7 +6,7 @@ plugins {
 group 'com.liufei.test'
 version '1.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -27,7 +27,9 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version 'IU-201.8743.12'
+    // IU-201.8743.12
+    // IU-203.7717.56
+    version 'IU-203.7717.56'
     intellij.updateSinceUntilBuild false
 }
 patchPluginXml {

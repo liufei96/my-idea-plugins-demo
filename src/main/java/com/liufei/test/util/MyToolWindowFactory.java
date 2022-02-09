@@ -20,12 +20,16 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import com.liufei.test.util.dialog.AlertDialog;
+import com.liufei.test.util.dialog.PromptDialog;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,21 +45,37 @@ public class MyToolWindowFactory implements ToolWindowFactory {
 
     Executor debugExecutorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
 
+    private JButton runButton = new JButton("run");
+
     @SneakyThrows
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         // 此处方法将会在点击ToolWindow的时候触发
         // 获取ContentManager
+
+        JPanel content = new MyWebToolWindowContent().getContent();
+        content.add(runButton, BorderLayout.NORTH);
+
         ContentManager contentManager = toolWindow.getContentManager();
         Content labelContent =
                 contentManager.getFactory() // 内容管理器获取工厂类
                         .createContent( // 创建Content（组件类实例、显示名称、是否可以锁定）
-                                jPanel(),
+                                content,
                                 "MyTab",
                                 false
                         );
         // 利用ContentManager添加Content
         contentManager.addContent(labelContent);
+
+
+        runButton.addActionListener(e -> {
+            PromptDialog promptDialog = new PromptDialog("执行回访", "message_text");
+            boolean isOk = promptDialog.showAndGet();
+            String text = promptDialog.getText();
+            System.out.println(text);
+            System.out.println(isOk);
+        });
+
 
 
 //        VirtualFile workspaceFile = project.getWorkspaceFile();

@@ -26,9 +26,11 @@
 
     <!--插件动作-->
     <actions>
-        <!-- Add your actions here -->
-        <action id="HelloWorldAction" class="com.liufei.test.HelloWorldAction" text="提示框" description="这是一个提示框">
-            <add-to-group group-id="ToolsMenu" anchor="first"/>
-        </action>
+<!--        <group id="MyPlugin.SampleMenu" text="Sample Menu" description="Sample menu">-->
+<!--            <add-to-group group-id="MainMenu" anchor="last"  />-->
+<!--            <action id="HelloWorldAction" class="com.liufei.test.HelloWorldAction" text="提示框" description="这是一个提示框">-->
+<!--                <add-to-group group-id="ToolsMenu" anchor="first"/>-->
+<!--            </action>-->
+<!--        </group>-->
     </actions>
 </idea-plugin>
